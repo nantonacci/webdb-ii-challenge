@@ -34,7 +34,7 @@ router.get("/:id", (req, res) => {
 });
 
 // post
-router.post("/", (req, res) => {
+router.post("/", validateData, (req, res) => {
   const newCar = req.body;
 
   db("cars")
@@ -91,4 +91,18 @@ router.delete("/:id", (req, res) => {
     });
 });
 
+// middleware
+function validateData(req, res, next) {
+  const { vin, make, model, mileage } = req.body;
+  const body = req.body;
+
+  if (Object.entries(body).length === 0) {
+    res.status(400).json({ message: "missing user data" });
+  }
+  if (!vin || !make || !model || !mileage) {
+    res.status(400).json({ message: "Missing a required field" });
+  } else {
+    next();
+  }
+}
 module.exports = router;
